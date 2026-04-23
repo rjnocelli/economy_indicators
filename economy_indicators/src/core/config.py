@@ -22,11 +22,12 @@ INDICATORS = {
     "EU": {
         "source": "ecb",
         "series": {
-            "interest_rate": "ESTR",
-            "inflation": "ICP.M.U2.N.000000.4.ANR",
-            "unemployment": "LFSA.M.U2.Z.Z.Z.Z.Z.Z.Z.UR",
-            "fx_eurusd": "EXR.D.USD.EUR.SP00.A",
-            "money_supply": "BSI.M.U2.Y.V.M30.X.1.U2.2300.Z01.E",
+            "interest_rate": {
+                "dataset": "EST",
+                "key": "B.EU000A2X2A25.WT",  # €STR
+            },
+            "fx_eurusd": {"dataset": "EXR", "key": "D.USD.EUR.SP00.A"},
+            "money_supply": {"dataset": "BSI", "key": "M.U2.Y.V.M30.X.1.U2.2300.Z01.E"},
         },
     },
 }
