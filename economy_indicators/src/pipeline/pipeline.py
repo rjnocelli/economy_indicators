@@ -52,7 +52,6 @@ def run_pipeline(
                 # ECB
                 # ----------------------
                 elif source == "ecb":
-                    print(series_config)
                     raw = ecb.fetch_series(
                         dataset=series_config["dataset"],
                         key=series_config["key"],
@@ -73,6 +72,8 @@ def run_pipeline(
                     indicator=indicator,
                     source=source,
                 )
+                if not normalized:
+                    print(f"⚠ EMPTY RESULT {country} - {indicator}")
 
                 all_rows.extend(normalized)
 

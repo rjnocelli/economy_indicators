@@ -39,7 +39,6 @@ def fetch_series(
             series = list(data["dataSets"][0]["series"].values())[0]
             observations = series["observations"]
             dates = data["structure"]["dimensions"]["observation"][0]["values"]
-
             output = []
             for idx, obs in observations.items():
                 value = obs[0]

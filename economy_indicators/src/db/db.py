@@ -1,44 +1,54 @@
-import psycopg2
 import os
+import sqlite3
+from contextlib import closing
+
+DB_PATH = "data/macro.db"
+
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS economic_indicators (
+    country TEXT NOT NULL,
+    date TEXT NOT NULL,
+    indicator TEXT NOT NULL,
+    value REAL,
+    unit TEXT,
+    source TEXT,
+    PRIMARY KEY (country, date, indicator)
+);
+"""
+
+
+def ensure_db_path():
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 
 def get_connection():
-    return psycopg2.connect(
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        host=os.getenv("DB_HOST"),
-        port=os.getenv("DB_PORT", 5432),
-    )
+    ensure_db_path()
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute(SCHEMA)
+    return conn
 
 
 def insert_data(rows):
     if not rows:
         return
 
-    conn = get_connection()
-    cur = conn.cursor()
-
-    query = """
-    INSERT INTO economic_indicators (country, date, indicator, value, unit, source)
-    VALUES (%s, %s, %s, %s, %s, %s)
-    ON CONFLICT (country, date, indicator) DO NOTHING;
-    """
-
-    data = [
-        (
-            r["country"],
-            r["date"],
-            r["indicator"],
-            r["value"],
-            r["unit"],
-            r["source"],
-        )
-        for r in rows
-    ]
-
-    cur.executemany(query, data)
-    conn.commit()
-
-    cur.close()
-    conn.close()
+    with closing(get_connection()) as conn:
+        with conn:
+            conn.executemany(
+                """
+                INSERT OR IGNORE INTO economic_indicators
+                (country, date, indicator, value, unit, source)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                [
+                    (
+                        r["country"],
+                        str(r["date"]),  # store as ISO string
+                        r["indicator"],
+                        r["value"],
+                        r["unit"],
+                        r["source"],
+                    )
+                    for r in rows
+                ],
+            )
