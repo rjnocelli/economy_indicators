@@ -3,3 +3,6 @@ pandas
 sqlalchemy
 psycopg2-binary
 plotly
+requests
+psycopg2-binary
+python-dotenv
