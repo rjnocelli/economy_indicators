@@ -4,14 +4,20 @@ from src.core.config import FRED_API_KEY
 BASE_URL = "https://api.stlouisfed.org/fred/series/observations"
 
 
-def fetch_series(series_id: str):
+def fetch_series(series_id: str, start_date=None, end_date=None, session=None):
     params = {
         "series_id": series_id,
         "api_key": FRED_API_KEY,
         "file_type": "json",
     }
+    session = session or requests.Session()
+    if start_date:
+        params["observation_start"] = start_date
 
-    res = requests.get(BASE_URL, params=params, timeout=10)
+    if end_date:
+        params["observation_end"] = end_date
+
+    res = session.get(BASE_URL, params=params, timeout=10)
     res.raise_for_status()
 
     data = res.json()["observations"]
