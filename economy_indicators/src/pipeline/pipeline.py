@@ -2,7 +2,7 @@ import time
 import random
 from datetime import date
 from typing import Optional
-import request
+import requests
 from src.core.config import INDICATORS
 from src.clients import fred, ecb
 from src.core.normalize import normalize
@@ -26,7 +26,7 @@ def run_pipeline(
 
     all_rows = []
 
-    session = request.Session()
+    session = requests.Session()
     session.headers.update(
         {
             "Accept": "application/json",

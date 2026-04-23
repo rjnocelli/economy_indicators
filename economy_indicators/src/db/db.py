@@ -16,6 +16,17 @@ CREATE TABLE IF NOT EXISTS economic_indicators (
 );
 """
 
+FEATURES_SCHEMA = """
+CREATE TABLE IF NOT EXISTS macro_features (
+    date TEXT NOT NULL,
+    country TEXT NOT NULL,
+    regime TEXT,
+    real_rate REAL,
+    inflation REAL,
+    fx REAL,
+    PRIMARY KEY (date, country)
+);
+"""
 
 def ensure_db_path():
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
@@ -25,6 +36,7 @@ def get_connection():
     ensure_db_path()
     conn = sqlite3.connect(DB_PATH)
     conn.execute(SCHEMA)
+    conn.execute(FEATURES_SCHEMA)
     return conn
 
 
